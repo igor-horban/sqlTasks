@@ -9,3 +9,167 @@ FROM Shop;
 
 2. Вивести загальну кількість всіх книг без урахування книг з непроставленою ціною
 SELECT COUNT(`id`) AS `book amount` FROM Shop WHERE `price` IS NOT NULL;
+
+3. Вивести статистику (див. 1) для книг новинка / не новинка
+SELECT `condition` AS 'New',
+	COUNT(`id`) AS 'Book amount',
+    SUM(`price`) AS 'Total summary',
+    AVG(`price`) AS 'Average summary',
+    MIN(`price`) AS 'Minimum summary',
+    MAX(`price`) AS 'Maximum summary'
+FROM Shop GROUP BY new;
+
+4. Вивести статистику (див. 1) для книг за кожним роком видання
+SELECT YEAR(`date`) AS 'Year of publishing',
+	COUNT(`id`) AS 'Book amount',
+    SUM(`price`) AS 'Total summary',
+    AVG(`price`) AS 'Average summary',
+    MIN(`price`) AS 'Minimum summary',
+    MAX(`price`) AS 'Maximum summary'
+FROM Shop
+GROUP BY YEAR(`date`);
+
+5. Змінити п.4, виключивши з статистики книги з ціною від 10 до 20
+SELECT YEAR(`date`) AS 'Year of publishing',
+	COUNT(`id`) AS 'Book amount',
+    SUM(`price`) AS 'Total summary',
+    AVG(`price`) AS 'Average summary',
+    MIN(`price`) AS 'Minimum summary',
+    MAX(`price`) AS 'Maximum summary'
+FROM Shop
+WHERE `price` NOT BETWEEN 10 AND 20
+GROUP BY YEAR(`date`);
+
+6. Змінити п.4. Відсортувати статистику по спадаючій кількості.
+SELECT YEAR(`date`) AS 'Year of publishing',
+	COUNT(`id`) AS 'Book amount',
+    SUM(`price`) AS 'Total summary',
+    AVG(`price`) AS 'Average summary',
+    MIN(`price`) AS 'Minimum summary',
+    MAX(`price`) AS 'Maximum summary'
+FROM Shop
+GROUP BY YEAR(`date`)
+ORDER BY COUNT(`id`) DESC;
+
+7. Вивести загальну кількість кодів книг і кодів книг що не повторюються
+SELECT COUNT(`code`) AS 'Codes amount',
+	COUNT(DISTINCT `code`) AS 'Unique codes'
+FROM Shop;
+
+8. Вивести статистику: загальна кількість і вартість книг по першій букві її назви
+SELECT COUNT(*) AS `books amount`,
+    SUM(`price`) AS `books price`,
+    LEFT(`id`, 1) AS `first_letter`
+FROM Shop 
+GROUP BY `first_letter`;
+
+9. Змінити п. 8, виключивши з статистики назви що починаються з англ. букви або з цифри.
+SELECT COUNT(*) AS `books amount`,
+    SUM(`price`) AS `books price`,
+    LEFT(`id`, 1) AS `first_letter`
+FROM Shop 
+WHERE NOT `id` LIKE '[A-Z]' AND NOT `id` LIKE '[0-9]'
+GROUP BY `first_letter`;
+
+10. Змінити п. 9 так щоб до складу статистики потрапили дані з роками більшими за 2000.
+SELECT COUNT(*) AS `books amount`,
+    SUM(`price`) AS `books price`,
+    LEFT(`id`, 1) AS `first_letter`
+FROM Shop 
+WHERE YEAR(`date`) >=2000
+GROUP BY `first_letter`;
+
+11. Змінити п. 10. Відсортувати статистику по спадаючій перших букв назви.
+SELECT COUNT(*) AS `books amount`,
+    SUM(`price`) AS `books price`,
+    LEFT(`id`, 1) AS `first_letter`
+FROM Shop 
+WHERE YEAR(`date`) >=2000
+GROUP BY `first_letter`
+ORDER BY `first_letter` DESC;
+
+12. Вивести статистику (див. 1) по кожному місяцю кожного року.
+SELECT COUNT(*) AS `book amount`, 
+	SUM(`price`) AS `total summary`, 
+	AVG(`price`) AS `average summary`, 
+	MIN(`price`) AS `minimum summary`, 
+	MAX(`price`) AS `maximum summary`, 
+	MONTH(`date`) AS `month`, 
+	YEAR(`date`) AS `year`
+FROM Shop
+GROUP BY `month`;
+
+13. Змінити п. 12 так щоб до складу статистики не увійшли дані з незаповненими датами.
+SELECT COUNT(*) AS `book amount`, 
+	SUM(`price`) AS `total summary`, 
+	AVG(`price`) AS `average summary`, 
+	MIN(`price`) AS `minimum summary`, 
+	MAX(`price`) AS `maximum summary`, 
+	MONTH(`date`) AS `month`, 
+	YEAR(`date`) AS `year`
+FROM Shop
+WHERE `date` is NOT NULL
+GROUP BY `month`;
+
+14. Змінити п. 12. Фільтр по спадаючій року і зростанню місяця.
+SELECT COUNT(*) AS `book amount`, 
+	SUM(`price`) AS `total summary`, 
+	AVG(`price`) AS `average summary`, 
+	MIN(`price`) AS `minimum summary`, 
+	MAX(`price`) AS `maximum summary`, 
+	MONTH(`date`) AS `month`, 
+	YEAR(`date`) AS `year`
+FROM Shop
+GROUP BY MONTH(`date`), YEAR(`date`)
+ORDER BY MONTH(`date`) DESC, YEAR(`date`) ASC;
+
+15. Вивести статистику для книг новинка / не новинка: загальна ціна, загальна ціна в грн. / Євро / руб. Колонкам запиту дати назви за змістом.
+SELECT `condition` AS `New`,
+	SUM(`price`) AS `Total summary`, 
+	SUM(`price`)*36.78 AS `Total summary in hryvnias`,
+	SUM(`price`)*0.91 AS `Total summary in euros`,
+	SUM(`price`)*81.55 AS `Total summary in rubles`
+FROM Shop
+GROUP BY `condition`;
+
+16. Змінити п. 15 так щоб виводилася округлена до цілого числа (дол. / Грн. / Євро / руб.) Ціна.
+SELECT `condition` AS `New`,
+	ROUND(SUM(`price`), 0) AS `Total summary`, 
+	ROUND(SUM(`price`)*36.78, 0) AS `Total summary in hryvnias`,
+	ROUND(SUM(`price`)*0.91, 0) AS `Total summary in euros`,
+	ROUND(SUM(`price`)*81.55, 0) AS `Total summary in rubles`
+FROM Shop
+GROUP BY `condition`;
+
+17. Вивести статистику (див. 1) по видавництвах.
+SELECT `edition` AS 'Edition',
+	COUNT(`id`) AS 'Books amount',
+	SUM(`price`) AS 'Total summary',
+	MIN(`price`) AS 'Minimum summary',
+	AVG(`price`) AS 'Average summary',
+	MAX(`price`) AS 'Maximum summary'
+FROM Shop
+GROUP BY `edition`;
+
+18. Вивести статистику (див. 1) за темами і видавництвами. Фільтр по видавництвам.
+SELECT `edition` AS 'Edition',
+	`theme` AS 'Book theme',
+	COUNT(`id`) AS 'Book amount',
+	SUM(`price`) AS 'Total summary',
+	MIN(`price`) AS 'Minimum summary',
+	AVG(`price`) AS 'Average summary',
+    MAX(`price`) AS 'Maximum summary'
+FROM Shop
+GROUP BY `edition`, `theme`;
+
+19. Вивести статистику (див. 1) за категоріями, темами і видавництвами. Фільтр по видавництвам, темах, категоріям.
+SELECT `edition` AS 'Edition',
+	`theme` AS 'Book theme',
+	`category` AS 'Book category',
+	COUNT(`id`) AS 'Book amount',
+	SUM(`price`) AS 'Total summary',
+    MIN(`price`) AS 'Minimum summary',
+    AVG(`price`) AS 'Average summary',
+    MAX(`price`) AS 'Maximum summary'
+FROM Shop
+GROUP BY `edition`, `theme`, `category`;
