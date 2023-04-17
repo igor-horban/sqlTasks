@@ -1,0 +1,76 @@
+1. Вивести книги у яких не введена ціна або ціна дорівнює 0
+SELECT * FROM Shop WHERE `price` IS NULL OR `price` = 0;
+
+2. Вивести книги у яких введена ціна, але не введений тираж
+SELECT * FROM Shop WHERE `price` IS NOT NULL AND `edition` IS NULL;
+
+3. Вивести книги, про дату видання яких нічого не відомо.
+SELECT * FROM Shop WHERE `date` IS NULL;
+
+5. Вивести список книг-новинок, відсортованих за зростанням ціни
+SELECT * FROM Shop WHERE `condition` = 1 ORDER BY `price`;
+
+6. Вивести список книг з числом сторінок від 300 до 400, відсортованих в зворотному алфавітному порядку назв
+SELECT * FROM Shop WHERE `pages` >= 300 AND `pages` <= 400 ORDER BY `name` DESC;
+
+7. Вивести список книг з ціною від 20 до 40, відсортованих за спаданням дати
+SELECT * FROM Shop WHERE `price` >= 20 AND `price` <= 40 ORDER BY `date` DESC;
+
+8. Вивести список книг, відсортованих в алфавітному порядку назв і ціною по спадаючій
+SELECT * FROM Shop ORDER BY `name` ASC, `price` DESC;
+
+10. Вивести значення наступних колонок: число символів в назві, перші 20 символів назви великими літерами
+SELECT LENGTH(`name`) AS `length`, UPPER(LEFT(`name`, 20)) AS `first 20 letters` FROM Shop;
+
+11. Вивести значення наступних колонок: перші 10 і останні 10 символів назви прописними буквами, розділені '...'
+SELECT CONCAT(LOWER(LEFT(`name`, 10)), '...', LOWER(RIGHT(`name`, 10))) AS `concatenate` FROM Shop;
+
+12. Вивести значення наступних колонок: назва, дата, день, місяць, рік
+SELECT `name`,
+	`date`,
+    	DAYOFMONTH(`date`) AS `day`,
+    	MONTH(`date`) AS `month`,
+    	YEAR(`date`) AS `year`
+FROM Shop;
+
+13. Вивести значення наступних колонок: назва, дата, дата в форматі 'dd / mm / yyyy'
+SELECT `name`,
+	`date`,
+   	DATE_FORMAT(`date`, '%d.%m.%Y') AS `correct date`
+FROM Shop;
+
+14. Вивести значення наступних колонок: код, ціна, ціна в грн., ціна в євро, ціна в руб.
+SELECT `code`,
+	`price`,
+    	(`price` * 36.78) AS `hryvnias price`,
+    	(`price` * 0.91) AS `euros price`,
+    	(`price` * 81.55) AS `rubles price`
+FROM Shop;
+
+15. Вивести значення наступних колонок: код, ціна, ціна в грн. без копійок, ціна без копійок округлена
+SELECT `code`,
+	`price`,
+    	FLOOR(`price` * 36.78) AS `hryvnias price without kopiykas`,
+    	CEILING(`price` * 36.78) AS `hryvnias price rounded off`
+FROM Shop;
+
+16. Додати інформацію про нову книгу (всі колонки)
+INSERT INTO Shop (`number`, `code`, `condition`, `name`, `price`, `publisher`, `pages`, `format`, `date`, `edition`, `theme`, `category`) VALUES
+	(34, 10679, 0, 'Програмування на Python для початківців', 16.69, 'Видавнича група BHV', 550, '70х100/16', '2001-12-26', 6000, 'Програмування', 'Python');
+
+17. Додати інформацію про нову книгу (колонки обов'язкові для введення)
+INSERT INTO Shop (`number`, `code`, `condition`, `name`, `price`, `publisher`, `pages`, `format`, `date`, `edition`, `theme`, `category`) VALUES
+	(40, 1280, 1, 'Проектування програмних систем', NULL, 'Видавнича група BHV', 300, NULL, NULL, 4000, 'Програмування', 'Інші книги');
+
+18. Видалити книги, видані до 1990 року
+DELETE FROM Shop WHERE YEAR(`date`) < 1990;
+
+19. Проставити поточну дату для тих книг, у яких дата видання відсутня
+UPDATE Shop
+	SET `date`=CURDATE()
+    	WHERE `date` IS NULL;
+
+20. Установити ознаку новинка для книг виданих після 2005 року
+UPDATE Shop
+	SET `condition`=1
+    	WHERE YEAR(`date`) > 2005;
