@@ -1,0 +1,11 @@
+1. Вивести статистику: загальна кількість всіх книг, їх вартість, їх середню вартість, мінімальну і максимальну ціну
+SELECT
+	COUNT(`id`) AS `book amount`,
+    SUM(`price`) AS `total summary`,
+    AVG(`price`) AS `average summary`,
+    MIN(`price`) AS `minimum summary`,
+    MAX(`price`) AS `maximum summary`
+FROM Shop;
+
+2. Вивести загальну кількість всіх книг без урахування книг з непроставленою ціною
+SELECT COUNT(`id`) AS `book amount` FROM Shop WHERE `price` IS NOT NULL;
